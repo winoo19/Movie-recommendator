@@ -133,16 +133,16 @@ def parse_datatypes(movies: pd.DataFrame):
 
 
 if __name__ == "__main__":
-    if os.path.exists("parsed_movies.csv"):
-        movies = pd.read_csv("parsed_movies.csv")
+    if os.path.exists("data/parsed_movies.csv"):
+        movies = pd.read_csv("data/parsed_movies.csv")
         movies = parse_datatypes(movies)
     else:
-        movies = pd.read_csv("movies_metadata.csv")
-        keywords = pd.read_csv("keywords.csv")
-        credits = pd.read_csv("credits.csv")
+        movies = pd.read_csv("data/movies_metadata.csv")
+        keywords = pd.read_csv("data/keywords.csv")
+        credits = pd.read_csv("data/credits.csv")
 
         movies = parse_movies(movies, keywords, credits)
-        movies.to_csv("parsed_movies.csv")
+        movies.to_csv("data/parsed_movies.csv")
 
     finished = False
     while not finished:
@@ -156,7 +156,7 @@ if __name__ == "__main__":
         movie.index = range(movie.shape[0])
 
         if movie.shape[0] > 1:
-            print(movie["title"], "\n")
+            print(movie[["title", "director", "release_date"]], "\n")
             correct_selection = False
             while not correct_selection:
                 try:
@@ -173,7 +173,7 @@ if __name__ == "__main__":
         movies["similarity_des"] = movies.apply(get_similarity(movie), axis=1)
         movies["similarity"] = movies["similarity_des"].map(sum)
         movies = movies.sort_values(by="similarity", ascending=False)
-        print(movies[["title", "vote_average", "popularity", "genres", "keywords", "similarity", "similarity_des"]].head(5))
+        print(movies[["title", "vote_average", "popularity", "genres", "cast", "release_date", "similarity"]].head(5))
 
         finished = input("Do you want another recommendation? (y/n): ")
         if finished == "y":
